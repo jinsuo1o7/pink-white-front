@@ -9,8 +9,10 @@ export default function Pagination({
   const curPage = new URLSearchParams(location.search).get("page") || 0;
 
   const getPageLink = (pageNumber) => {
-    if (pageNumber < 0 || pageNumber >= totalPages) return;
-    return `/articles?page=${pageNumber}`;
+    const searchParams = new URLSearchParams(location.search);
+    searchParams.set("page", pageNumber.toString());
+
+    return `${location.pathname}?${searchParams.toString()}`;
   };
 
   const handlePageClick = () => {
@@ -63,7 +65,7 @@ export default function Pagination({
           aria-label="Pagination"
         >
           <Link
-            to={`/articles?page=${+curPage - 1 >= 0 ? +curPage - 1 : 0}`}
+            to={curPage <= 0 ? getPageLink(0) : getPageLink(+curPage - 1)}
             onClick={() => handlePageClick()}
             className="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
           >
@@ -71,9 +73,11 @@ export default function Pagination({
           </Link>
           {pageLinks}
           <Link
-            to={`/articles?page=${
-              +curPage + 1 < totalPages ? +curPage + 1 : +curPage
-            }`}
+            to={
+              curPage >= totalPages - 1
+                ? getPageLink(totalPages - 1)
+                : getPageLink(+curPage + 1)
+            }
             onClick={() => handlePageClick()}
             className="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
           >

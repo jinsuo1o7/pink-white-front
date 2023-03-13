@@ -6,6 +6,7 @@ import ArticleCard from "./ArticleCard";
 
 const ArticleList = () => {
   const location = useLocation();
+  const { search } = useLocation();
   const curPage = new URLSearchParams(location.search).get("page") || 0;
 
   const [articles, setArticles] = useState([]);
@@ -16,11 +17,11 @@ const ArticleList = () => {
     size: 0,
   });
 
-  const loadData = async (pageNum = curPage) => {
+  const loadData = async () => {
     const {
       data: { content, totalPages, totalElements, size, number },
     } = await axios.get(
-      process.env.REACT_APP_ARTICLE_API_URL + `?page=${pageNum}`
+      process.env.REACT_APP_ARTICLE_API_URL + `${search}&?page=${curPage}`
     );
 
     setPage({ totalPages, totalElements, size, number });
@@ -29,7 +30,7 @@ const ArticleList = () => {
 
   useEffect(() => {
     loadData();
-  }, [curPage]);
+  }, [search, curPage]);
 
   return (
     <>
